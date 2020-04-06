@@ -69,7 +69,7 @@ int main(void){
 
 	res1 = min(res1, res2);
 
-	if(res1 > INF)
+	if(res1 >= INF)
 		cout << -1 << '\n';
 	else
 		cout << res1 << '\n';
