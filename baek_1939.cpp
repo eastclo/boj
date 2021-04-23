@@ -1,64 +1,46 @@
-#include <iostream>
-#include <queue>
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-const int MN = 1e4;
-const int MM = 1e5;
+const int MN = 10101;
+const int MM = 100101;
+const int INF = 2e9;
 
-struct edge{
-	int nxt, w;
-	int idx;
-	edge(int nxt, int w, int idx) : nxt(nxt), w(w), idx(idx) {}
-};
+using P = pair<int, int>;
+vector<P> g[MN];
+int dist[MN];
 
-int N, M;
-int U, V;
-vector<edge> G[MN+1];
-
-bool f(int w){
-	queue<int> q;
-	q.push(U);
-
-	bool visited[MM];
-	for(int i = 0; i < M; i++){
-		visited[i] = false;
+int main(void){
+	int N, M, U, V;
+	cin >> N >> M;
+	for (int i = 0; i < M; i++){
+		int u, v, w;    cin >> u >> v >> w;
+		g[u].push_back({w, v});
+		g[v].push_back({w, u});
 	}
+	cin >> U >> V;
+	
+	priority_queue<P, vector<P>, less<P> > pq;
+	pq.push({INF, U});
+	dist[U] = INF;
 
-	while(!q.empty()){
-		int cur = q.front(); q.pop();
+	while (!pq.empty()) {
+		P top = pq.top();	pq.pop();
+		int cur_w = top.first;
+		int cur = top.second;
 
-		for(edge nxt_edge : G[cur]){
-			int nxt_w = nxt_edge.w;
-			int nxt = nxt_edge.nxt;
-			int idx = nxt_edge.idx;
-			if(!visited[idx] && nxt_w >= w){
-				if(nxt == V)
-					return true;
-				q.push(nxt);
-				visited[idx] = true;
+		if (cur_w < dist[cur]) continue;
+
+		for (P nxt_node : g[cur]) {
+			int nxt_w = nxt_node.first;
+			int nxt = nxt_node.second;	
+
+			if (dist[nxt] < min(cur_w, nxt_w)) {
+				dist[nxt] = min(cur_w, nxt_w);
+				pq.push({dist[nxt], nxt});
 			}
 		}
 	}
-	return false;
-}
 
-int main(void){
-	cin >> N >> M;
-	for(int i = 0; i < M; i++){
-		int u, v, w;    cin >> u >> v >> w;
-		G[u].push_back(edge{v, w, i});
-		G[v].push_back(edge{u, w, i});
-	}
-	cin >> U >> V;
-
-	int lo = 0, hi = 1e9+1;
-	for(int i = 0; i < 40; i++){
-		int mid = (lo+hi)/2;
-		if(f(mid)) lo = mid;    //mid 중량일 때 지나다닐 수 있으면 true
-		else hi = mid;  //없으면 false
-	}
-
-	cout << lo << '\n';
+	cout << dist[V] << '\n';
 }

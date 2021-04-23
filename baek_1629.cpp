@@ -1,18 +1,21 @@
-#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
-
-long long A, B, C;
-long long pw(long long a, long long n){
+#define ll long long
+int A, B, C;
+ll mypow(ll a, ll n) {
 	if(n == 1)
 		return a % C;
-	if(n%2) return pw(a, n-1) * a % C;
-	long long tmp = pw(a, n/2);
-	return tmp * tmp % C;
+	else if(n%2)
+		return mypow(a, n-1) * a % C;
+	else {
+		ll tmp = mypow(a, n/2) % C;
+		return tmp * tmp % C;
+	}
 }
 
-int main(void){
+int main(void)
+{
 	cin >> A >> B >> C;
-
-	cout << pw(A,B) << '\n';
+	cout << mypow(10, 11) % C;
 }

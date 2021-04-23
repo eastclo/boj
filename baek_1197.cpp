@@ -1,62 +1,49 @@
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-struct edge{
-	int u, v;
-	int w;
-};
+const int MN = 10101;
+const int MM = 100101;
+const int INF = 1e9;
+struct edge{ int w,u,v;};
+int N, M, par[MN], rnk[MN];
+edge w[MM];
 
-int par[10000];
-int rnk[10000];
-edge arr[100000];
-
-void init(int N){
-	for(int i = 0; i < N; i++){
+void init(int n) {
+	for(int i = 1; i <= n; i++) 
 		par[i] = i, rnk[i] = 1;
-	}
 }
-
-int find(int x){
-	if(par[x] == x)
-		return x;
-	else
-		return par[x] = find(par[x]);
+int find(int x) {
+	if(par[x] == x) return x;
+	return par[x] = find(par[x]);
 }
-
-void unite(int x, int y){
+void unite(int x, int y) {
 	x = find(x), y = find(y);
-	if( x == y )
-		return;
-	if(rnk[x] > rnk[y])
-		swap(x, y);
-	par[x] = y;
+	if(x == y) return;
 
+	if(rnk[x] < rnk[y]) swap(x, y);
+
+	par[y] = x;
 	if(rnk[x] == rnk[y])
-		rnk[y]++;
+		rnk[x]++;
 }
 
-int main(void){
-	int V, E;	cin >> V >> E;
-
-	for(int i = 0; i < E; i++){
-		cin >> arr[i].u >> arr[i].v >> arr[i].w;
-
-		arr[i].u--, arr[i].v--;
-	}
-
-	init(V);
-
-	sort(arr, arr + E, [](const edge& a, const edge& b){
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	cin >> N >> M;
+	init(N);
+	for(int i = 0; i < M; i++) 
+		cin >> w[i].u >> w[i].v >> w[i].w;
+	sort(w, w+M, [](edge a, edge b){
 			return a.w < b.w;
 			});
 	int res = 0;
-	for(int i = 0; i < E; i++){
-		if( find(arr[i].v) != find(arr[i].u) ){
-			unite(arr[i].v, arr[i].u);
-			res += arr[i].w;
+	for(int i = 0; i < M; i++) {
+		if(find(w[i].u) != find(w[i].v)) {
+			unite(w[i].u, w[i].v);
+			res += w[i].w;
 		}
 	}
-	cout << res << '\n';
+	cout << res;
 }

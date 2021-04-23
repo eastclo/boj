@@ -1,55 +1,44 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-const int MAX_N = 1e6;
+const int MN = 1001010;
+const int INF = 1e9;
+int N, M, par[MN], rnk[MN];
 
-int par[MAX_N+1], rnk[MAX_N+1];
-
-void init(int N){
-	for(int i = 1; i <= N; i++)
+void init(int n) {
+	for(int i = 1; i <= n; i++) 
 		par[i] = i, rnk[i] = 1;
 }
-
-int find(int x){
-	if(par[x] == x)
-		return x;
-	else
-		return par[x] = find(par[x]);
+int find(int x) {
+	if(par[x] == x) return x;
+	return par[x] = find(par[x]);
 }
-
-void unite(int x, int y){
+void unite(int x, int y) {
 	x = find(x), y = find(y);
-	if( x == y )
-		return;
-	if(rnk[x] > rnk[y]){
-		swap(x, y);
-	}
-	par[x] = y;
+	if(x == y) return;
+
+	if(rnk[x] < rnk[y]) swap(x, y);
+
+	par[y] = x;
 	if(rnk[x] == rnk[y])
-		rnk[y]++;
+		rnk[x]++;
 }
 
-vector<int> ans;
-int main(void){
-	int N, M;       cin >> N >> M;
-
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	cin >> N >> M;
 	init(N);
-	for(int i = 0; i < M; i++){
-		int opr, a, b;  cin >> opr >> a >> b;
-		if(opr == 0)
-			unite(a, b);
-		else if (find(a) == find(b))
-			ans.push_back(1);
-		else
-			ans.push_back(0);
-	}
-
-	for(int i = 0; i < ans.size(); i++){
-		if(ans[i] == 1)
-			cout << "YES" << '\n';
-		else
-			cout << "NO" << '\n';
+	for(int i = 0; i < M; i++) {
+		int q, a, b;	cin >> q >> a >> b;
+		if(q) {
+			if(find(a) == find(b))
+				cout << "YES\n";
+			else
+				cout << "NO\n";
+		}
+		else 
+			unite(a,b);
 	}
 }

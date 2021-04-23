@@ -1,23 +1,20 @@
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
+const int MN = 100101;
 
-int main(void){
-	int N; cin >> N;
-	int set[100000];
-	for(int i = 0; i < N; i++)
-		cin >> set[i];
-
-	sort(set, set + N);
-
-	int M; cin >> M;
-	int arr[100000];
-	for(int i = 0; i < M; i++)
+int arr[MN];
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	int N;	cin >> N;
+	for(int i = 0; i < N; i++) 
 		cin >> arr[i];
 
-	for(int i = 0; i < M; i++){
-		cout << binary_search(set, set+N, arr[i]) << '\n';
+	sort(arr, arr + N);
+	int M;	cin >> M;
+	for(int i = 0; i < M; i++) {
+		int a;	cin >> a;
+		cout << binary_search(arr, arr + N, a) << '\n';
 	}
 }
-

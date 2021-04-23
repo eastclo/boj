@@ -1,83 +1,72 @@
-#include <iostream>
-#include <algorithm>
-#include <cmath>
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-const int MN = 1000;
-
-struct edge{
-	int u, v;
+const int MN = 1010;
+const int MM = 1010101;
+struct edge{ 
+	int u,v;
 	double w;
-	edge(int u, int v, double w) : u(u), v(v), w(w) {}
 };
+int N, M, par[MN], rnk[MN];
+edge w[MM];
+pair<int, int> node[MN];
 
-vector<edge> arr;
-pair<long long,long long> point[MN+1];
-int par[MN+1], rnk[MN+1];
-
-void init(int N){
-	for(int i = 1; i <= N; i++){
+void init(int n) {
+	for(int i = 1; i <= n; i++) 
 		par[i] = i, rnk[i] = 1;
-	}
 }
-
-int find(int x){
-	if(par[x] == x)
-		return x;
-	else
-		return par[x] = find(par[x]);
+int find(int x) {
+	if(par[x] == x) return x;
+	return par[x] = find(par[x]);
 }
-
-void unite(int x, int y){
+void unite(int x, int y) {
 	x = find(x), y = find(y);
+	if(x == y) return;
 
-	if(x == y)
-		return;
+	if(rnk[x] < rnk[y]) swap(x, y);
 
-	if(rnk[x] > rnk[y])
-		swap(x, y);
-	par[x] = y;
-
+	par[y] = x;
 	if(rnk[x] == rnk[y])
-		rnk[y]++;
+		rnk[x]++;
 }
 
-int main(void){
-	int N, M;       cin >> N >> M;
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	cin >> N >> M;
 	init(N);
 
-	for(int i = 1; i <= N; i++)
-		cin >> point[i].first >> point[i].second;
-
-	for(int i = 1; i < N; i++){
-		for(int j = i + 1; j <= N; j++){
-			long long a = abs(point[i].first - point[j].first);
-			long long b = abs(point[i].second - point[j].second);
-			double w = sqrt(a*a + b*b);
-			arr.push_back(edge{i,j,w});
+	for(int i = 1; i <= N; i++) 
+		cin >> node[i].first >> node[i].second;
+	int cnt = 0;
+	for(int i = 1; i <= N; i++) {
+		for(int j = 1; j <= N; j++) {
+			if(i==j) continue;
+			w[cnt].u = i;
+			w[cnt].v = j;
+			long long a, b, c, d;
+			a = node[i].first;
+			b = node[i].second;
+			c = node[j].first;
+			d = node[j].second;
+			w[cnt++].w = sqrt((a-c)*(a-c) + (b-d)*(b-d));
 		}
 	}
-
-	for(int i = 0; i < M; i++){
-		int x, y;       cin >> x >> y;
-		unite(x, y);
+	for(int i = 0; i < M; i++) {
+		int a, b;	cin >> a >> b;
+		unite(a,b);
 	}
-
-	sort(arr.begin(), arr.end(), [](const edge& a, const edge& b){
+	sort(w, w+cnt, [](edge a, edge b){
 			return a.w < b.w;
 			});
-
 	double res = 0;
-	for(int i = 0; i < arr.size(); i++){
-		int x = arr[i].u;
-		int y = arr[i].v;
-		if(find(x) != find(y)){
-			unite(x, y);
-			res += arr[i].w;
+
+	for(int i = 0; i < cnt; i++) {
+		if(find(w[i].u) != find(w[i].v)) {
+			unite(w[i].u, w[i].v);
+			res += w[i].w;
 		}
 	}
-
-	printf("%.2lf\n", res);
+	cout << fixed << setprecision(2) << res;
 }

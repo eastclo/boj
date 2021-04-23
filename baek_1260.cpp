@@ -1,53 +1,46 @@
-#include <queue>
-#include <iostream>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-vector<int> G[1001];
-bool visited[1001];
+const int MN = 1010;
 
-void dfs(int cur){
-	visited[cur] = true;
-	cout << cur << ' ';
-
-	for(int nxt : G[cur]){
-		if(!visited[nxt])
-			dfs(nxt);
-	}
+vector<int> g[MN];
+int N, M, V;
+bool visited[MN];
+void dfs(int n) {
+	visited[n] = true;
+	cout << n << ' ';
+	for(int next : g[n])
+		if(!visited[next]) 
+			dfs(next);
 }
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	cin >> N >> M >> V;
 
-int main(void){
-	int N, M, V;    cin >> N >> M >> V;
-
-	for(int i = 0; i < M; i++){
-		int u, v;       cin >> u >> v;
-
-		G[u].push_back(v);
-		G[v].push_back(u);
+	for(int i = 0; i < M; i++) {
+		int a, b;	cin >> a >> b;
+		g[a].push_back(b);
+		g[b].push_back(a);
 	}
-
-	for(int i = 1; i <= N; i++){
-		sort(G[i].begin(), G[i].end());
-	}
+	for(int i = 1; i <= N; i++)
+		sort(g[i].begin(), g[i].end());
 
 	dfs(V);
 	cout << '\n';
-
-	fill(visited, visited + 1001, false);
+	memset(visited, 0, sizeof(visited));
 
 	queue<int> q;
 	q.push(V);
 	visited[V] = true;
-
-	while(!q.empty()){
-		int cur = q.front(); q.pop();
-		cout << cur << ' ';
-
-		for(int nxt: G[cur]){
-			if(!visited[nxt]){
-				q.push(nxt);
-				visited[nxt] = true;
+	while(!q.empty()) {
+		int n = q.front();	q.pop();
+		cout << n << ' ';
+		for(int next : g[n]) {
+			if(!visited[next]) {
+				q.push(next);
+				visited[next] = true;
 			}
 		}
 	}

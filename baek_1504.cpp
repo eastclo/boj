@@ -1,76 +1,62 @@
-#include <iostream>
-#include <queue>
-#include <algorithm>
+#include <bits/stdc++.h>
 
 using namespace std;
+#define ll long long
+#define PLL pair<ll,ll>
+#define P pair<int,int>
+#define X first
+#define Y second
 
-const int MAX_N = 801;
-const int INF = 1e8;
+const int MN = 801;
+const int INF = 2e9;
+int N, M, U, V;
+vector<PLL> g[MN];
+ll dist[MN];
+ll res1, res2;
 
-struct edge{
-	int v, w;
-	edge(int v, int w) : v(v), w(w) {}
-};
+void dij(int st) {
+	fill(dist, dist + 1 + N, INF);
+	priority_queue<PLL,vector<PLL>,greater<PLL>> pq;
+	pq.push({0, st});
+	dist[st] = 0;
+	while(!pq.empty()) {
+		PLL cur = pq.top();	pq.pop();
+		ll n = cur.Y;
+		ll w = cur.X;
 
-vector<edge> G[MAX_N];
-int dist[MAX_N];
-int N, E;
+		if(dist[n] < w) continue;
 
-void dijkstra(int node){
-	using P = pair<int,int>;
-	for(int i = 1; i <= N; i++)
-		dist[i] = INF;
-
-	priority_queue<P, vector<P>, greater<P>> pq;
-	pq.push(make_pair(0, node));
-	dist[node] = 0;
-
-	while(!pq.empty()){
-		P cur_edge = pq.top();  pq.pop();
-		int cur_w = cur_edge.first;
-		int cur = cur_edge.second;
-
-		if(dist[cur] < cur_w)
-			continue;
-
-		for(edge nxt_edge : G[cur]){
-			int nxt = nxt_edge.v;
-			if(dist[nxt] > dist[cur] + nxt_edge.w){
-				dist[nxt] = dist[cur] + nxt_edge.w;
-				pq.push(make_pair(dist[nxt], nxt));
+		for(PLL next : g[n]) {
+			if(dist[next.Y] > w + next.X) {
+				dist[next.Y] = w + next.X;
+				pq.push({dist[next.Y], next.Y});
 			}
 		}
 	}
 }
-
-int main(void){
-	cin >> N >> E;
-
-	for(int i = 0; i < E; i++){
-		int u, v, w;    cin >> u >> v >> w;
-
-		G[u].push_back(edge{v, w});
-		G[v].push_back(edge{u, w});
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	cin >> N >> M;
+	for(int i = 0; i < M; i++) {
+		int u, v, w;	cin >> u >> v >> w;
+		g[u].push_back({w, v});
+		g[v].push_back({w, u});
 	}
+	cin >> U >> V;
 
-	int pt1, pt2;   cin >> pt1 >> pt2;
-	int res1 = 0;
-	int res2 = 0;
+	dij(1);
+	res1 += dist[U];
+	res2 += dist[V];
+	dij(U);
+	res1 += dist[V];
+	res2 += dist[V];
+	dij(N);
+	res1 += dist[V];
+	res2 += dist[U];
 
-	dijkstra(1);
-	res1 += dist[pt1];
-	res2 += dist[pt2];
-	dijkstra(pt1);
-	res1 += dist[pt2];
-	res2 += dist[N];
-	dijkstra(pt2);
-	res1 += dist[N];
-	res2 += dist[pt1];
-
-	res1 = min(res1, res2);
-
-	if(res1 >= INF)
-		cout << -1 << '\n';
+	if(res1 >= INF && res2 >= INF)
+		cout << -1;
 	else
-		cout << res1 << '\n';
+		cout << min(res1, res2);
 }

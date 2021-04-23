@@ -1,33 +1,32 @@
-#include <iostream>
+#include <bits/stdc++.h>
 
 using namespace std;
+#define ll long long
+const int MN = 10101;
+int N, K;
+int arr[MN];
 
-int K, N;
-int T[10101];
-
-int f(long long len){
-	int sum = 0;
-	for(int i = 0; i < K; i++){
-		if(T[i] >= len)
-			sum += T[i]/len;
-	}
-
-	return sum;
+ll f(int len) {
+	ll cnt = 0;
+	for(int i = 0; i < N; i++) 
+		cnt += arr[i]/len;
+	return cnt;
 }
 
-int main(void){
-	cin >> K >> N;
-	for(int i = 0; i < K; i++){
-		cin >> T[i];
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	cin >> N >> K;
+	for(int i = 0; i < N; i++)
+		cin >> arr[i];
+
+	ll lo = 0, hi = 3e9;
+	for(int i = 0; i < 40; i++) {
+		ll mid = (lo + hi) / 2;
+		if(K <= f(mid))
+			lo = mid;	
+		else
+			hi = mid;
 	}
-
-	long long lo = 0, hi = 3e9;
-
-	for(int i = 0; i < 40; i++){
-		long long mid = (lo+hi)/2;
-		if(f(mid) >= N) lo = mid;
-		else hi = mid;
-	}
-
-	cout << lo << '\n';
+	cout << lo;
 }

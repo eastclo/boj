@@ -1,41 +1,45 @@
-#include <iostream>
+#include <bits/stdc++.h>
+
 using namespace std;
+#define P pair<int,int>
+#define X first
+#define Y second
 
-int N;
-char L[200], R[200];
+const int MN = 27;
 
-void Pre(char n){
+char L[MN], R[MN];
+void Post(char n) {
+	if(n == 0) return;
 	cout << n;
-	if(L[n] != '.') Pre(L[n]);
-	if(R[n] != '.') Pre(R[n]);
+	Post(L[n-'A']);
+	Post(R[n-'A']);
 }
 
-void In(char n){
-	if(L[n] != '.') In(L[n]);
+void In(char n) {
+	if(n == 0) return;
+	In(L[n-'A']);
 	cout << n;
-	if(R[n] != '.') In(R[n]);
+	In(R[n-'A']);
 }
 
-void Post(char n){
-	if(L[n] != '.') Post(L[n]);
-	if(R[n] != '.') Post(R[n]);
+void Pre(char n) {
+	if(n == 0) return;
+	Pre(L[n-'A']);
+	Pre(R[n-'A']);
 	cout << n;
 }
 
-
-
-int main(void){
-	cin >> N;
-	for(int i = 0; i < N; i++){
-		char a, b, c;   cin >> a >> b >> c;
-		L[a] = b;
-		R[a] = c;
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
+	int N;	cin >> N;
+	for(int i = 0; i < N; i++) {
+		char a, b, c;	cin >> a >> b >> c;
+		if(b != '.') L[a-'A'] = b;
+		if(c != '.') R[a-'A'] = c;
 	}
+
+	Post('A'); cout << '\n';
+	In('A'); cout << '\n';
 	Pre('A');
-	cout << '\n';
-	In('A');
-	cout << '\n';
-	Post('A');
-	cout << '\n';
-	return 0;
 }

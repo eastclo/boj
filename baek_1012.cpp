@@ -1,62 +1,50 @@
-#include <iostream>
-#include <vector>
+#include <bits/stdc++.h>
 
 using namespace std;
 
-int di[] = { 1, -1, 0, 0 };
-int dj[] = { 0, 0, -1, 1 };
+const int MN = 51;
 
-int N, M;
-bool visited[50][50];
-bool map[50][50];
+int g[MN][MN];
+bool visited[MN][MN];
+int di[4] = {0, 0, 1, -1};
+int dj[4] = {1, -1, 0, 0};
+int N, M, K;
 
-void dfs(int ci, int cj){
-	visited[ci][cj] = true;
+void dfs(int x, int y) {
+	visited[x][y] = true;
 
-	for(int d = 0; d < 4; d++){
-		int ni = ci + di[d];
-		int nj = cj + dj[d];
-
-		if( 0 <= ni && ni < M && 0 <= nj && nj < N)
-			if(!visited[ni][nj] && map[ni][nj])
-				dfs(ni, nj);
+	for(int d = 0; d < 4; d++) {
+		int nx = x + di[d];
+		int ny = y + dj[d];
+		if(0 <= nx && nx < N && 0 <= ny && ny < M) 
+			if(!visited[nx][ny] && g[nx][ny])
+				dfs(nx, ny);
 	}
 }
 
-int main(void){
-	vector<int> res;
+int main(void)
+{
+	ios::sync_with_stdio(false);	cin.tie(NULL);
 	int T;	cin >> T;
-	for(int n = 0; n < T; n++){
-		int K; cin >> N >> M >> K;
+	while(T--) {
+		cin >> M >> N >> K;
+		for(int i = 0; i < K; i++) {
+			int b, a;	cin >> b >> a;
+			g[a][b] = 1;
+		}
 
-		for(int i = 0; i < 50; i++){
-			for(int j = 0; j < 50; j++)
-				visited[i][j] = false;
-		}
-		
-		for(int i = 0; i < 50; i++){
-			for(int j = 0; j < 50; j++)
-				map[i][j] = false;
-		}
-		
-		for(int k = 0; k < K; k++){
-			int a, b; cin >> a >> b;
-			map[b][a] = true;
-		}
-		
-		
-		int cnt = 0;
-		for(int i = 0; i < M; i++){
-			for(int j = 0; j < N; j++)
-				if(!visited[i][j] && map[i][j]){
+		int res = 0;
+		for(int i = 0; i < N; i++) {
+			for(int j = 0; j < M; j++) {
+				if(!visited[i][j] && g[i][j]) {
 					dfs(i, j);
-					cnt++;
+					res++;
 				}
+			}
 		}
-		
-		res.push_back(cnt);
-	}
+		cout << res << '\n';
 
-	for(int i = 0; i < res.size(); i++)
-		cout << res[i] << '\n';
+		memset(g, 0, sizeof(g));
+		memset(visited, 0, sizeof(visited));
+	}
 }
